@@ -1,5 +1,5 @@
 {
-  "name": "mentor_crm_server",
+  "name": "portfolioWebsiteServer",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -28,11 +28,7 @@
     "nodemon": "^1.12.1"
   },
   "main": "./bin/www",
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
-  "author": "Team Trolls",
+  "author": "Christopher Miller <ccmiller2018@gmail.com>",
   "license": "license.md",
-  "description": "A Server for Mentor CRM"
+  "description": "A Server for my portfolio website"
 }
