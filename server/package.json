@@ -6,7 +6,39 @@
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
     "testwatcher": "jest --coverage --watchAll",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "lint-staged": "lint-staged",
+    "stylelint": "stylelint",
+    "stylelint-scss": "stylelint --syntax scss"
+  },
+  "stylelint": {
+    "rules": {
+      "block-no-empty": null,
+      "color-no-invalid-hex": true,
+      "comment-empty-line-before": [
+        "always", {
+         "ignore": ["stylelint-commands", "after-comment"]
+        }
+      ],
+      "declaration-colon-space-after": "always",
+      "indentation": ["tab", {
+        "except": ["value"]
+        }
+      ],
+      "max-empty-lines": 2,
+      "rule-empty-line-before": [
+        "always", {
+          "except": ["first-nested"],
+          "ignore": ["after-comment"]
+        }
+      ],
+      "unit-whitelist": ["em", "rem", "%", "s"]
+    }
+  },
+  "lint-staged": {
+    "*.js": "eslint",
+    "*.css": "stylelint",
+    "*.scss": "stylelint-scss"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",
@@ -25,8 +57,12 @@
   },
   "devDependencies": {
     "eslint": "^4.10.0",
+    "eslint-staged": "^1.0.1",
+    "husky": "^0.14.3",
     "jest": "^21.2.1",
-    "nodemon": "^1.12.1"
+    "nodemon": "^1.12.1",
+    "pre-commit": "^1.2.2",
+    "stylelint": "^8.2.0"
   },
   "main": "./bin/www",
   "author": "Christopher Miller <ccmiller2018@gmail.com>",
