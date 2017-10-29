@@ -1,10 +1,9 @@
 # Do What You Want To Public License
 ## Version 1, 23rd October 2017
-**Copyright (C) 2017 School of Code**
 
-Everyone is permitted to copy and distribute verbatim or modified  copies of this license document, and changing it is allowed as long as the name is changed.
+Everyone is permitted to copy and distribute verbatim or modified copies of this license document, and changing it is allowed as long as the name is changed.
 
-Do What You Want To Public License
+Do Whatever You Want To Public License
 
 Terms and Conditions for copying, distribution and modification
 
@@ -13,9 +12,6 @@ Terms and Conditions for copying, distribution and modification
 3. The only restriction is credit - we ask that in your documentation you refer back to the users
 listed below
 	* Christopher Miller [ccmiller2018@gmail.com](mailto:ccmiller2018@gmail.com)
-	* Peter Yu [peteryu.uk@gmail.com](mailto:peteryu.uk@gmail.com)
-	* Clare Streets [clarelstreets@gmail.com](mailto:clarelstreets@gmail.com)
-	* Sina Dorostkar [sina.md88@gmail.com](mailto:sina.md88@gmail.com)
 4. We request that the users above listed are credited as one of the following, the choice of which is entirely yours
 	* The inspiration
 	* The original developers

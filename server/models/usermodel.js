@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  firstname: {
+  firstName: {
     type: String,
     required: true,
     trim: true
@@ -27,6 +27,14 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true
+  },
+  permissionLevel: {
+    type: Number,
+    required: true
+  },
+  active: {
+    type: Boolean,
+    required: true
   }
 });
 
