@@ -13,7 +13,6 @@ const config = require("./config/config");
 
 const index = require("./routes/index");
 const users = require("./routes/users");
-const logger = require("./libs/logger");
 
 const app = express();
 
