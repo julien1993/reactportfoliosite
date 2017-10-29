@@ -84,6 +84,49 @@ router.post('/login', function(req, res, next) {
   }
 });
 
+router.get("/validate", (req, res) => {
+  let email = req.query.email;
+  let key = req.query.key;
+
+  RandomKey.findOne(
+    {
+      $and: [
+        {
+          key: key
+        },
+        {
+          userEmail: email
+        }
+      ]
+    },
+    (error, result) => {
+      if (error) {
+        return error;
+      } else if (result !== null) {
+        // console.log(result);
+        User.findOne(
+          {
+            email: email
+          },
+          (error, result) => {
+            if (error) {
+              return error;
+            } else {
+              req.session.email = result.email;
+              req.session.id = result._id;
+              req.session.firstName = result.firstName;
+              req.session.surname = result.surname;
+              res.redirect("/continuesignup");
+            }
+          }
+        );
+      } else {
+        console.log("could not find");
+      }
+    }
+  );
+});
+
 router.get('/cpanel', authentication, function (req, res) {
 	res.send('the control panel');
 });
