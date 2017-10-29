@@ -17,7 +17,7 @@ const logger = require("./libs/logger");
 
 const app = express();
 
-mongoose.connect(`${config.db.protocol}://${config.db.username}:${config.db.password}@${config.db.url}:${config.db.port}/${config.db.name}`, { useMongoClient: true });
+mongoose.connect(`${config.db.protocol}://${config.db.username}:${config.db.password}@${config.db.url1}:${config.db.port1},${config.db.url2}:${config.db.port2},${config.db.url3}:${config.db.port3}/${config.db.name}?ssl=true&replicaSet=${config.db.replicaset}&authSource=${config.db.authsource}`, { useMongoClient: true });
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
