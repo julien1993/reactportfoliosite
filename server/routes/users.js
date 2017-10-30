@@ -6,6 +6,9 @@ const RandomKey = require('../models/randomkeymodel');
 const authentication = require('../libs/authentication');
 const mailUtil = require('../libs/mailUtil');
 
+router.get("/", function (req, res) {
+  User.find()
+})
 router.post("/register", (req, res) => {
   var generatedKey = undefined;
   let firstName = req.body.firstName;
