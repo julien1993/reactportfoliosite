@@ -1,65 +1,19 @@
-# MentorCRM Server
+# Personal Portfolio Server
 
 This is a fully functioning server, with config and dotenv configured and connecting to a database as specified in the .env file
 
-## The .env file
+## The Standards
 
-* DB_PROTOCOL=put the protocol here.  the whole system is set up to use MongoDB and mongoose,
-but this can be changed easily
-* DB_USERNAME=put your username here for accessing the database
-* DB_PASSWORD=put your password here for accessing the database
-* DB_URL=put the url here for accessing the database
-* DB_PORT=put the port here for accessing the database
-* DB_NAME=put the name of the database here
-* APP_SECRET=put the secret here you wish to use for sessions
-* PORT=put the port here for the app (ie, what port you will use to connect to it)
-* APP_NAME=put the name you want displayed for your app here
+this server is designed to use the REST API Standards, combined with only ever returning a json object:
 
-## an example .env:
-```
-DB_PROTOCOL=mongodb
-DB_USERNAME=admin
-DB_PASSWORD=password
-DB_URL=localhost
-DB_PORT=27017
-DB_NAME=database
-APP_SECRET=alongstringofcharactersusuallyrandomlygenerated
-PORT=32768
-APP_NAME=your app name
-```
+if the object has a key called error, it will be a negative response, and if it has a key called payload, it is a positive response.
 
-by default, this boilerplate is set up for port 32768
+## API End Points
 
-## config/config.js
+all API End Points begin with /api/v1/
 
-this file allows access to the environment variables.
-
-to call to the variables you would use:
-
-| config.js variable   | process.env variable    |
-|----------------------|-------------------------|
-| config.db.protocol   | process.env.DB_PROTOCOL |
-| config.db.username   | process.env.DB_USERNAME |
-| config.db.password   | process.env.DB_PASSWORD |
-| config.db.url        | process.env.DB_URL      |
-| config.db.port       | process.env.DB_PORT     |
-| config.db.name       | process.env.DB_NAME     |
-| config.sessionsecret | process.env.APP_SECRET  |
-| config.port          | process.env.PORT        |
-| config.appname       | process.env.APP_NAME    |
-
-there is no specific need to set appname as an environment variable, but using this method means that you can edit one file, and within a few short moments have a working server in full from this boilerplate.
-
-## NPM Scripts
-
-there are four scripts:
-
-`npm run testwatcher` will run full testing every time a file is altered, with coverage enabled
-
-`npm run test` will run a one off full test with coverage enabled.
-
-I have included tests for all the pre-written files, that offer coverage of 100% and pass of 100%
-
-`npm run start` will start the server using standard Node
-
-`npm run devstart` will run the server using NodeMon, so when files are changed the server will restart
+| Endpoint        | Authentication Required? | Method | Purpose                                 | Usage                                                                                                                     | Actions Taken By Route                                                                                                                                                                                  | Positive Response         | Negative Response        |
+|-----------------|--------------------------|--------|-----------------------------------------|---------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------|--------------------------|
+| /users/register | no                       | POST   | to register a user                      | {firstName: <user's first name>,  surname: <user's surname>,  email: <user's email>,  confirmEmail: <user's email again>} | 1. Verify all fields present 2. Compare email and confirmEmail 3. Create new User in database 4. Send email with unique key for each user 5. Create new record in the Key Database 6. Return a response | {payload: "user created"} | {error: <error message>} |
+| /users/login    | no                       | POST   | to log in a user                        | {logUsername: <user's username>,  logPassword: <user's password>}                                                         | 1. Verify that the username and password provided match in the database 2. Create a session with the email, username and permission level of the player 3. Return a response                            | {payload: <the session>}  | {error: <error message>} |
+| /users/validate | no                       | GET    | to validate the link used from an email | add query parameters of email and key                                                                                     | 1. Verify that the email address and key are the same as found in the Key Database 2. Create a session with the email, first name and surname of the user 3. Return a response                          | {payload: <the session>}  | {error: <error message>} |

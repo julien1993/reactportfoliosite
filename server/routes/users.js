@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
+
 const User = require('../models/usermodel');
 const RandomKey = require('../models/randomkeymodel');
 const authentication = require('../libs/authentication');
 const mailUtil = require('../libs/mailUtil');
 
-router.post("/register", (req, res, next) => {
-  console.log("im in register");
+router.post("/register", (req, res) => {
   var generatedKey = undefined;
-
   let firstName = req.body.firstName;
   let surname = req.body.surname;
   let email = req.body.email;
@@ -22,7 +21,7 @@ router.post("/register", (req, res, next) => {
         },
         (error, result) => {
           if (error) {
-            return error;
+            return res.send({error: error});
           } else if (result === null) {
             var userData = new User();
 
@@ -35,8 +34,7 @@ router.post("/register", (req, res, next) => {
             userData.username = email;
             userData.save(function(error, user) {
               if (error) {
-                return next(error);
-                console.log(error);
+                return res.send({error: error});
               } else {
                 mailUtil(req, res, generatedKey => {
                   // console.log("im here" + generatedKey);
@@ -46,17 +44,14 @@ router.post("/register", (req, res, next) => {
                   console.log(random);
                   random.save(function(error, result) {
                     if (error) {
-                      res.send({error: "Failure in email sending"});
+                      res.send({error: error});
                     }
                   });
                 });
                 res.send({ payload: "user created" });
-
-                // return res.redirect("/cpanel");
               }
             });
           } else {
-            console.log("this Email address is already exist");
             res.send({ error: "this user already exists" });
           }
         }
@@ -65,22 +60,20 @@ router.post("/register", (req, res, next) => {
   }
 });
 
-router.post('/login', function(req, res, next) {
-  if (req.body.logusername && req.body.logpassword) {
-    User.authenticate(req.body.logusername, req.body.logpassword, function(error, user) {
+router.post('/login', function(req, res) {
+  if (req.body.logEmail && req.body.logPassword) {
+    User.authenticate(req.body.logUsername, req.body.logPassword, function(error, user) {
       if (error || !user) {
-        var err = new Error('Wrong email or password.');
-        err.status = 401;
-        return next(err);
+        return res.send({error:"Wrong email or password."});
       } else {
-        req.session.userId = user._id;
-        return res.send({payload: "success"});
+        req.session.email = user.email;
+        req.session.username = user.username;
+        req.session.permissionLevel = user.permissionLevel;
+        return res.send({payload: req.session});
       }
     });
   } else {
-    var err = new Error('All fields required.');
-    err.status = 400;
-    return next(err);
+    return res.send({error: "All fields required."});
   }
 });
 
@@ -110,25 +103,20 @@ router.get("/validate", (req, res) => {
           },
           (error, result) => {
             if (error) {
-              return error;
+              return res.send({error: error});
             } else {
               req.session.email = result.email;
-              req.session.id = result._id;
               req.session.firstName = result.firstName;
               req.session.surname = result.surname;
-              res.redirect("/continuesignup");
+              res.send({payload: req.session});
             }
           }
         );
       } else {
-        console.log("could not find");
+        return res.send({error: "could not find randomKey"})
       }
     }
   );
-});
-
-router.get('/cpanel', authentication, function (req, res) {
-	res.send('the control panel');
 });
 
 module.exports = router;
