@@ -7,6 +7,52 @@ const authentication = require('../libs/authentication');
 const mailUtil = require('../libs/mailUtil');
 const PasswordKey = require('../models/passwordkeymodel');
 
+router.post("/resetpassword", function(req, res) {
+  var generatedKey = undefined;
+  let email = req.body.email;
+  let confirmEmail = req.body.confirmEmail;
+  if (email && confirmEmail) {
+    if (email == confirmEmail) {
+      User.findOne({
+        email: email
+      }, (error, result) => {
+        if (error) {
+          return res.send({error: error});
+        } else if (result != null) {
+          var resetme = new PasswordKey();
+          userData.email = email;
+          userData.firstName = firstName;
+          userData.surname = surname;
+          userData.password = " ";
+          userData.active = false;
+          userData.permissionLevel = 0;
+          userData.username = email;
+          userData.save(function(error, user) {
+            if (error) {
+              return res.send({error: error});
+            } else {
+              mailUtil(req, res, generatedKey => {
+                var random = new RandomKey();
+                random.userEmail = userData.email;
+                random.key = generatedKey;
+                console.log(random);
+                random.save(function(error, result) {
+                  if (error) {
+                    res.send({error: error});
+                  }
+                });
+              });
+              res.send({payload: "user created"});
+            }
+          });
+        } else {
+          res.send({error: "this user already exists"});
+        }
+      });
+    }
+  }
+});
+
 router.post("/register", (req, res) => {
   var generatedKey = undefined;
   let firstName = req.body.firstName;
