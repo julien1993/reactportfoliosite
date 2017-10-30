@@ -5,15 +5,7 @@ const User = require('../models/usermodel');
 const RandomKey = require('../models/randomkeymodel');
 const authentication = require('../libs/authentication');
 const mailUtil = require('../libs/mailUtil');
-
-router.get("/", function(req, res) {
-  user.find(function(err, result) {
-    if (err) {
-      return res.send({error:err});
-    }
-    res.send({payload:result});
-  });
-});
+const PasswordKey = require('../models/passwordkeymodel');
 
 router.post("/register", (req, res) => {
   var generatedKey = undefined;
@@ -83,7 +75,6 @@ router.post('/login', function(req, res) {
 router.get("/validate", (req, res) => {
   let email = req.query.email;
   let key = req.query.key;
-
   RandomKey.findOne({
     $and: [
       {
@@ -112,6 +103,104 @@ router.get("/validate", (req, res) => {
     } else {
       return res.send({error: "could not find randomKey"})
     }
+  });
+});
+
+router.post("/completesignup/:username", function(req, res) {
+  var newUsername = req.params.username;
+  var newPassword = req.body.password;
+  var newFirstName = req.body.firstName;
+  var newSurname = req.body.surname;
+  User.findOneAndUpdate({username:req.params.username}, {$set:{username:newUsername, password:newPassword, firstName:newFirstName, surname:newSurname}}, {new:true}, function(err, result) {
+    if(err) {
+      res.send({error:err})
+    }
+    res.send({payload:result});
+  });
+});
+
+router.get("/", authentication.requiresLevel5, function(req, res) {
+  User.find(function(err, result) {
+    if (err) {
+      return res.send({error:err});
+    }
+    res.send({payload:result});
+  });
+});
+
+router.get("/:username", authentication.requiresLevel5OrSelf, function(req, res) {
+  User.findOne(function(err, result) {
+    if (err) {
+      return res.send({error:err});
+    }
+    res.send({payload:result});
+  });
+});
+
+router.post("/:username", authentication.requiresLevel5OrSelf, function(req, res) {
+  var newUsername = req.params.username;
+  var newPassword = req.body.password;
+  var newFirstName = req.body.firstName;
+  var newSurname = req.body.surname;
+  User.findOneAndUpdate({username:req.params.username}, {$set:{username:newUsername, password:newPassword, firstName:newFirstName, surname:newSurname}}, {new:true}, function(err, result) {
+    if(err) {
+      res.send({error:err})
+    }
+    res.send({payload:result});
+  });
+});
+
+router.get("/remove/:username", authentication.requiresLevel5OrSelf, function(req, res) {
+  User.findOneAndRemove({username:req.params.username}, function (err, result) {
+    if(err) {
+      res.send({error:err});
+    }
+    res.send({payload:result});
+  });
+});
+
+router.get("/validatepasswordkey", (req, res) => {
+  let email = req.query.email;
+  let key = req.query.key;
+  PasswordKey.findOne({
+    $and: [
+      {
+        key: key
+      }, {
+        userEmail: email
+      }
+    ]
+  }, (error, result) => {
+    if (error) {
+      return error;
+    } else if (result !== null) {
+      // console.log(result);
+      User.findOne({
+        email: email
+      }, (error, result) => {
+        if (error) {
+          return res.send({error: error});
+        } else {
+          req.session.email = result.email;
+          req.session.username = result.username;
+          req.session.firstName = result.firstName;
+          req.session.surname = result.surname;
+          res.send({payload: req.session});
+        }
+      });
+    } else {
+      return res.send({error: "could not find Password Key"})
+    }
+  });
+});
+
+router.post("/recoverpassword/:username", authentication.requiresLevel5OrSelf, function(req, res) {
+  var newPassword = req.body.password;
+  User.findOneAndUpdate({username:req.params.username}, {$set:{password:newPassword}}, {new:true}, function(err, result) {
+    if(err) {
+      res.send({error:err})
+    }
+    res.send({payload:result});
   });
 });
 
